@@ -3,12 +3,11 @@ from adislog import adislog
 
 from flask import Flask, request, redirect
 from pymongo import MongoClient
-from pika import BlockingConnection, ConnectionParameters, PlainCredentials
 from uuid import uuid4
 from time import time
 
 application=Flask(__name__)
-config=adisconfig('/etc/adistools/wallfaker.yaml')
+config=adisconfig('/opt/adistools/configs/wallfaker.yaml')
 log=adislog(
     backends=['terminal'],
     debug=True,
@@ -46,7 +45,6 @@ def redirect(wallfaker_query):
             "ip_addr"                     : ip_addr,
             "user_agent"                  : user_agent,
             "timestamp"                   : timestamp,
-            "host_details"                : None        
             }
 
         metrics.insert_one(document)
