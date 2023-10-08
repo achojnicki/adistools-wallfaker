@@ -7,7 +7,7 @@ from uuid import uuid4
 from time import time
 
 application=Flask(__name__)
-config=adisconfig('/opt/adistools/configs/wallfaker.yaml')
+config=adisconfig('/opt/adistools/configs/adistools-wallfaker.yaml')
 log=adislog(
     backends=['terminal'],
     debug=True,
@@ -15,7 +15,7 @@ log=adislog(
 )
 mongo_cli=MongoClient(
     config.mongo.host,
-    config.mongo.port
+    config.mongo.port,
 )
 mongo_db=mongo_cli[config.mongo.db]
 urls=mongo_db['wallfaker']
