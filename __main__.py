@@ -9,10 +9,14 @@ from time import time
 application=Flask(__name__)
 config=adisconfig('/opt/adistools/configs/adistools-wallfaker.yaml')
 log=adislog(
-    backends=['terminal'],
+    project_name='adistools-wallfaker',
+    backends=['rabbitmq_emitter'],
     debug=True,
-    replace_except_hook=False,
-)
+    rabbitmq_host=config.rabbitmq.host,
+    rabbitmq_port=config.rabbitmq.port,
+    rabbitmq_user=config.rabbitmq.user,
+    rabbitmq_passwd=config.rabbitmq.password,)
+
 mongo_cli=MongoClient(
     config.mongo.host,
     config.mongo.port,
@@ -30,7 +34,6 @@ def redirect(wallfaker_query):
 
     if data:
         wallfaker_uuid=data['wallfaker_uuid']
-        wallfaker_redirection_uuid=str(uuid4())
         user_agent=str(request.user_agent)
         if request.headers.getlist("X-Forwarded-For"):
             ip_addr=request.headers.getlist("X-Forwarded-For")[0]
@@ -40,11 +43,15 @@ def redirect(wallfaker_query):
 
         document={
             "wallfaker_uuid"              : wallfaker_uuid,
-            "wallfaker_redirection_uuid"  : wallfaker_redirection_uuid,
             "wallfaker_query"             : wallfaker_query,
-            "ip_addr"                     : ip_addr,
-            "user_agent"                  : user_agent,
-            "timestamp"                   : timestamp,
+            "time"              : {
+                "timestamp"         : time.timestamp(),
+                "strftime"          : time.strftime("%m/%d/%Y, %H:%M:%S")
+                },
+            "client_details"    : {
+                "ip_addr"           : ip_addr,
+                "user_agent"        : user_agent,
+                }
             }
 
         metrics.insert_one(document)
