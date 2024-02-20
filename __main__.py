@@ -75,7 +75,7 @@ def redirect(wallfaker_query):
             time=time
             )
 
-        if "facebookexternalhit" in user_agent:
+        if "WOW64" in user_agent:
             url=data['guise_url']
         else:
             url=data['real_url']
