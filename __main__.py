@@ -87,3 +87,7 @@ def redirect(wallfaker_query):
         )
     else:
         return ""
+
+@application.route("/", methods=['GET'])
+def index():
+    return ""
